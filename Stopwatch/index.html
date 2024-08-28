@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="watch">
+            <div class="outer">
+                <div class="inner">
+                    <span class="min">0 :</span>
+                    <span class="sec">&nbsp;0 .</span>
+                    <span class="msec">&nbsp;0</span>
+                </div>
+            </div>
+            <div class="buttons">
+                <button class="reset hidden">Reset</button>
+                <button class="start">Start</button>
+                <button class="lap hidden">Lap</button>
+            </div>
+        </div>
+        <ul class="laps">
+            <button class="clearlaps hidden">Clear All</button>
+        </ul>
+    </div>
+    <script >
+        let pbutton=document.getElementsByClassName("start")[0];
+        let rbutton=document.getElementsByClassName("reset")[0];
+        let lbutton=document.getElementsByClassName("lap")[0];
+        let cbutton=document.getElementsByClassName("clearlaps")[0];
+        let minute=document.getElementsByClassName("min")[0];
+        let second=document.getElementsByClassName("sec")[0];
+        let msecond=document.getElementsByClassName("msec")[0];
+        let laps=document.getElementsByClassName("laps")[0];
+        let bg=document.getElementsByClassName("outer")[0];
+        let watchsound= new Audio("watch.mp3")
+
+
+        let lapitems=0
+        let pause=false;
+        let resume=false;
+        let secount=0;
+        let c;
+        let mscount=0;
+        let ms;
+        let m;
+        let mincount=0;
+        const toggle = () =>{
+            lbutton.classList.remove("hidden")
+            rbutton.classList.remove("hidden")
+        };
+
+        const s = () =>{
+            
+            if(!pause && !resume){
+                watchsound.play();
+                pbutton.textContent="Pause";
+                bg.classList.add("animation-bg")
+                c=setInterval(() => {
+                    if(secount === 60){
+                        secount=0;
+                    }
+                    second.innerText= ` ${ ++secount} . `;
+                },1000);
+        
+                ms=setInterval(() => {
+                    if(mscount === 100){
+                        mscount=0;
+                    }
+                    msecond.innerText= `${++mscount} `;
+                },10);
+
+                m=setInterval(() => {
+                    if(mincount === 60){
+                        mincount=0;
+                    }
+                    minute.innerText= `${++mincount} : `;
+                },60*1000);
+                pause=true;
+                resume=true;
+            }else{
+                pbutton.textContent="Start";
+                watchsound.pause();
+                clearInterval(c);
+                clearInterval(ms);
+                clearInterval(m);
+                pause=false;
+                resume=false;
+                
+                bg.classList.remove("animation-bg")
+            }
+            toggle();
+        };
+
+        const r = () =>{
+            watchsound.pause();
+            resume=true;
+            pause=true;
+            second.innerHTML=" 0 . "
+            msecond.innerHTML=" &nbsp;0"
+            minute.innerHTML=" 0&nbsp; :"
+            secount=0;
+            s();
+            lbutton.classList.add("hidden")
+            rbutton.classList.add("hidden")
+            
+        }
+        const l = () =>{
+            let li=document.createElement("li");
+            let number=document.createElement("span")
+            let timestamps=document.createElement("span")
+
+            li.setAttribute("class","content")
+            number.setAttribute("class","number")
+            timestamps.setAttribute("class","timestamp")
+            number.innerHTML =`#${++lapitems}`
+            timestamps.innerHTML = ` ${secount} : ${mscount} .${mincount} `;
+
+            li.append(number,timestamps);
+            laps.append(li)
+            cbutton.classList.remove("hidden")
+        }
+        const cl = () =>{
+            laps.innerHTML = ``
+            laps.append(cbutton)
+            cbutton.classList.add("hidden")
+        }
+        pbutton.addEventListener("click",s); 
+        rbutton.addEventListener("click",r); 
+        lbutton.addEventListener("click",l)
+        cbutton.addEventListener("click",cl)
+    </script>
+</body>
+</html>
